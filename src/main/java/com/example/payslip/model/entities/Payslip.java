@@ -1,4 +1,4 @@
-package com.example.payslip.entities;
+package com.example.payslip.model.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -7,7 +7,6 @@ import jakarta.persistence.Id;
 
 import java.time.Month;
 import java.time.Year;
-//Test
 @Entity
 public class Payslip {
 
