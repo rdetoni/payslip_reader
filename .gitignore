@@ -74,6 +74,9 @@ com_crashlytics_export_strings.xml
 # ignore ALL .properties files
 *.properties
 
+# ignore ALL .pdf files
+*.PDF
+
 # Editor-based Rest Client
 .idea/httpRequests
 
