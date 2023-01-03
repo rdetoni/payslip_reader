@@ -74,6 +74,9 @@ com_crashlytics_export_strings.xml
 # ignore ALL .properties files
 *.properties
 
+# ignore target folder
+target/
+
 # ignore ALL .pdf files
 *.PDF
 

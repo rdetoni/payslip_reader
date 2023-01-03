@@ -1,14 +1,27 @@
 package com.example.payslip.model.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.Month;
 import java.time.Year;
 @Entity
+@Getter @Setter @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Payslip {
+
+    public Payslip(Month month, Year year, Double totalYearSum, Double baseSalary, Double bonus,
+                   Double netSalary, byte[] payslipFile){
+        this.month = month;
+        this.year = year;
+        this.totalYearSum = totalYearSum;
+        this.baseSalary = baseSalary;
+        this.bonus = bonus;
+        this.netSalary = netSalary;
+        this.payslipFile = payslipFile;
+    }
 
     @Id
     @GeneratedValue
@@ -32,70 +45,7 @@ public class Payslip {
     @Column
     private Double netSalary;
 
-    @Column
+    @Lob
+    @Column(name="payslip_file", columnDefinition="MEDIUMBLOB")
     private byte[] payslipFile;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Month getMonth() {
-        return month;
-    }
-
-    public void setMonth(Month month) {
-        this.month = month;
-    }
-
-    public Year getYear() {
-        return year;
-    }
-
-    public void setYear(Year year) {
-        this.year = year;
-    }
-
-    public Double getTotalYearSum() {
-        return totalYearSum;
-    }
-
-    public void setTotalYearSum(Double totalYearSum) {
-        this.totalYearSum = totalYearSum;
-    }
-
-    public Double getBaseSalary() {
-        return baseSalary;
-    }
-
-    public void setBaseSalary(Double baseSalary) {
-        this.baseSalary = baseSalary;
-    }
-
-    public Double getBonus() {
-        return bonus;
-    }
-
-    public void setBonus(Double bonus) {
-        this.bonus = bonus;
-    }
-
-    public Double getNetSalary() {
-        return netSalary;
-    }
-
-    public void setNetSalary(Double netSalary) {
-        this.netSalary = netSalary;
-    }
-
-    public byte[] getPayslipFile() {
-        return payslipFile;
-    }
-
-    public void setPayslipFile(byte[] payslipFile) {
-        this.payslipFile = payslipFile;
-    }
 }
