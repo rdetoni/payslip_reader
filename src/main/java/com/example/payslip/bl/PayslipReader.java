@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +26,21 @@ import java.util.stream.StreamSupport;
 public class PayslipReader {
 
 private PayslipRepository payslipRepository;
+
+@Value("${payslip.regex.dateRegex}")
+private String dateRegex;
+
+@Value("${payslip.regex.totalYearRegex}")
+private String totalYearRegex;
+
+@Value("${payslip.regex.baseSalaryRegex}")
+private String baseSalaryRegex;
+
+@Value("${payslip.regex.bonusRegex}")
+private String bonusRegex;
+
+@Value("${payslip.regex.netSalaryRegex}")
+private String netSalaryRegex;
 
 @Autowired
 public PayslipReader(PayslipRepository payslipRepository){
@@ -117,26 +133,26 @@ public Payslip getPayslipFromFile(MultipartFile originalPdf, String password) th
     document.close();
 
     log.info("Extracting necessary information");
-    //TODO: Regex should be properties on application.properties file, and not hardcoded strings.
     //gets month and year
-    String date = extractString("[0-9]{2}\\.[0-9]{2}\\.[0-9]{4}", payslipContent);
+    String date = extractString(dateRegex, payslipContent);
 
     //total year sum
-    String totalYear = extractString("Podstawa składek\\s\\r\\n.*\\r\\n\\s[\\d]{2,3}\\s[\\d]{2,3},[\\d]{2}", payslipContent)
-            .replaceAll(",",".").substring(34, 44).replaceAll(" ", "");
+    //TODO: Special character ł is not working when used as a property. Needs to be fixed.
+    String totalYear = extractString("Podstawa składek\\s\\r\\n.*\\r\\n\\s[\\d]{2,3}\\s[\\d]{2,3},[\\d]{2}", payslipContent);
+    totalYear = totalYear.replaceAll(",",".").substring(34, totalYear.length()).replaceAll(" ", "");
 
     //base salary
-    String base = extractString("[\\d]{2}\\s[\\d]{3},[\\d]{2}\\sPLN", payslipContent)
-            .replaceAll(",", ".").substring(0, 9).replaceAll(" ", "");
+    String base = extractString(baseSalaryRegex, payslipContent).replaceAll(",", ".").substring(0, 9)
+            .replaceAll(" ", "");
     //bonus
-    String bonus = extractString("Bonus\\s[\\d]{3},[\\d]{2}", payslipContent);
+    String bonus = extractString(bonusRegex, payslipContent);
     if(!bonus.isEmpty()){
-        bonus = bonus.replaceAll(",", ".").substring(6, 12).replaceAll(" ", "");
+        bonus = bonus.replaceAll(",", ".").substring(0, bonus.length()-5).replaceAll(" ", "");
     }
 
     //net salary
-    String netSalary = extractString("[\\d]{1,2}\\s[\\d]{3},[\\d]{2}\\r\\nROR", payslipContent)
-            .replaceAll(",", ".").substring(0, 8).replaceAll(" ", "");
+    String netSalary = extractString(netSalaryRegex, payslipContent).replaceAll(",", ".")
+            .substring(0, 8).replaceAll(" ", "");
     log.info("Information extracted successfully.");
 
     Payslip newPayslip = validateAndCreateObject(date, totalYear, base, bonus, netSalary, originalPdf);
@@ -146,7 +162,7 @@ public Payslip getPayslipFromFile(MultipartFile originalPdf, String password) th
         log.error("File could not be processed.");
         throw new IOException("File could not be processed");
     }else{
-        log.info("Payslip was created, for Month {0} and Year {1}", new Object[]{newPayslip.getMonth().name(), newPayslip.getYear()});
+        log.info("Payslip was created, for Month {} and Year {}", new Object[]{newPayslip.getMonth().name(), newPayslip.getYear()});
         return newPayslip;
     }
 }

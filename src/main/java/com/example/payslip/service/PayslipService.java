@@ -5,10 +5,10 @@ import com.example.payslip.bl.PayslipWriter;
 import com.example.payslip.model.entities.Payslip;
 import com.example.payslip.model.repo.PayslipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
@@ -39,7 +39,7 @@ public class PayslipService {
         }
     }
 
-    public MultipartFile getPayslipByMonthAndYear(int month, int year) throws FileNotFoundException, IOException {
+    public ResponseEntity<byte[]> getPayslipByMonthAndYear(int month, int year) throws FileNotFoundException, IOException {
         return payslipWriter.getFileFromPayslip(month, year);
     }
 
