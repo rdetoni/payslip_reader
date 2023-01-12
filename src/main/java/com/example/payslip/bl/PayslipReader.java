@@ -15,11 +15,8 @@ import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
 import java.time.Month;
 import java.time.Year;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Component
 @Slf4j
@@ -70,14 +67,11 @@ private String extractString(String regex, String text){
     return matcher.find() ? matcher.group(0) : "";
 }
 
-private void isExistingPayslip(Payslip payslip) throws FileAlreadyExistsException{
+private void isExistingPayslip(Payslip payslip) throws FileAlreadyExistsException {
     log.info("Checking if payslip already exists.");
-    List<Payslip> payslipList =  StreamSupport.stream(payslipRepository.findAll().spliterator(), false)
-            .filter(p -> (p.getMonth() == payslip.getMonth()) && (p.getYear().compareTo(payslip.getYear()) == 0))
-            .collect(Collectors.toList());
 
-    if(!payslipList.isEmpty()){
-        log.error("Payslip already exists.");
+    if(payslipRepository.findByMonthAndYear(payslip.getMonth(), payslip.getYear()).isPresent()){
+        log.info("Payslip already exists.");
         throw new FileAlreadyExistsException("Payslip already exists.");
     }
 }
@@ -106,7 +100,8 @@ private Payslip validateAndCreateObject(String date, String totalYear, String ba
     //validates all data
     if(date.isEmpty() || totalYear.isEmpty() || baseSal.isEmpty() || netSalaryText.isEmpty()){
         log.error("Error validating data. Missing information.");
-        return null;
+        log.error("File could not be processed.");
+        throw new IOException("File could not be processed. Missing information.");
     }else{
         month = Month.of(Integer.valueOf(date.substring(3, 5)));
         log.debug("Month: {}", month.name());
@@ -156,15 +151,11 @@ public Payslip getPayslipFromFile(MultipartFile originalPdf, String password) th
     log.info("Information extracted successfully.");
 
     Payslip newPayslip = validateAndCreateObject(date, totalYear, base, bonus, netSalary, originalPdf);
+
     isExistingPayslip(newPayslip);
 
-    if(newPayslip == null){
-        log.error("File could not be processed.");
-        throw new IOException("File could not be processed");
-    }else{
-        log.info("Payslip was created, for Month {} and Year {}", new Object[]{newPayslip.getMonth().name(), newPayslip.getYear()});
-        return newPayslip;
-    }
+    log.info("Payslip was created, for Month {} and Year {}", new Object[]{newPayslip.getMonth().name(), newPayslip.getYear()});
+    return newPayslip;
 }
 
 }

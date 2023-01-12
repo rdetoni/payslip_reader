@@ -42,9 +42,7 @@ public class PayslipReaderController {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(IOException.class)
-    public String return500(IOException e){
-        return "Error processing PDF file. Exception is: " + e.getMessage();
-    }
+    public String return500(IOException e){ return "Error processing PDF file. Exception is: " + e.getMessage(); }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(FileAlreadyExistsException.class)
