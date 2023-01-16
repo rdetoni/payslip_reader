@@ -1,0 +1,30 @@
+version: '2.13'
+services:
+  mysql-payslip:
+    image: 'mysql:8.0'
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=(Your sql password here)
+      - MYSQL_DATABASE=payslipreader
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-payslip-data:/var/lib/mysql
+
+  payslip-reader:
+    image: payslip_reader
+    container_name: payslip_app
+    ports:
+      - "8081:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-payslip:3306/payslipreader
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=(Your sql password here)
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    build:
+      dockerfile: "Dockerfile"
+    depends_on:
+      - mysql-payslip
+
+volumes:
+  mysql-payslip-data:

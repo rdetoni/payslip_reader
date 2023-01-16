@@ -74,6 +74,12 @@ com_crashlytics_export_strings.xml
 # ignore ALL .properties files
 *.properties
 
+# ignore ALL .sql files
+*.sql
+
+#Docker compose file cannot be commited because contains sensitive information
+docker-compose.yml
+
 # ignore target folder
 target/
 
