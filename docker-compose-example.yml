@@ -4,7 +4,7 @@ services:
     image: 'mysql:8.0'
     container_name: mysql
     environment:
-      - MYSQL_ROOT_PASSWORD=(Your sql password here)
+      - MYSQL_ROOT_PASSWORD=[YOUR_PASSWORD_HERE]
       - MYSQL_DATABASE=payslipreader
     ports:
       - "3306:3306"
@@ -13,18 +13,43 @@ services:
 
   payslip-reader:
     image: payslip_reader
-    container_name: payslip_app
+    container_name: payslipapp
     ports:
       - "8081:8080"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-payslip:3306/payslipreader
       - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=(Your sql password here)
+      - SPRING_DATASOURCE_PASSWORD=[YOUR_PASSWORD_HERE]
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     build:
       dockerfile: "Dockerfile"
     depends_on:
       - mysql-payslip
 
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    volumes:
+      - type: bind
+        source: [YOUR_BASE_PATH_HERE]\prometheus.yml
+        target: /etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus-data
+    depends_on:
+      - payslip-reader
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/grafana-data
+
 volumes:
   mysql-payslip-data:
+  prometheus-data:
+  grafana-data:

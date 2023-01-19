@@ -16,7 +16,6 @@ import java.time.DateTimeException;
 @RestController
 @RequestMapping(path="/payslipReader")
 public class PayslipReaderController {
-    //TODO: Take a look at Spring Actuator to log request and response calls for this controller
     private PayslipService payslipService;
 
     @Autowired
