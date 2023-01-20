@@ -11,7 +11,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.FileAlreadyExistsException;
 import java.time.Month;
 import java.time.Year;
@@ -82,7 +84,8 @@ private File getFile(MultipartFile file, String fileName) throws IOException{
     if(convertedFile.exists()){
         return convertedFile;
     }else{
-        file.transferTo(convertedFile);
+        OutputStream outputStream = new FileOutputStream(convertedFile);
+        outputStream.write(file.getBytes());
         return convertedFile;
     }
 }
@@ -116,7 +119,7 @@ private Payslip validateAndCreateObject(String date, String totalYear, String ba
     }
 
     //populates and return new object
-    log.info("Data valildated.");
+    log.info("Data validated.");
     return new Payslip(month, year, totalYearSum, baseSalary, bonus, netSalary, file.getBytes());
 }
 
@@ -133,7 +136,7 @@ public Payslip getPayslipFromFile(MultipartFile originalPdf, String password) th
 
     //total year sum
     //TODO: Special character ł is not working when used as a property. Needs to be fixed.
-    String totalYear = extractString("Podstawa składek\\s\\r\\n.*\\r\\n\\s[\\d]{2,3}\\s[\\d]{2,3},[\\d]{2}", payslipContent);
+    String totalYear = extractString("Podstawa składek\\s\\n.*\\n\\s[\\d]{2,3}\\s[\\d]{2,3},[\\d]{2}", payslipContent);
     totalYear = totalYear.replaceAll(",",".").substring(34, totalYear.length()).replaceAll(" ", "");
 
     //base salary

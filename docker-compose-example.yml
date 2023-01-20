@@ -16,11 +16,13 @@ services:
     container_name: payslipapp
     ports:
       - "8081:8080"
+      - "5005:5005"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-payslip:3306/payslipreader
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=[YOUR_PASSWORD_HERE]
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     build:
       dockerfile: "Dockerfile"
     depends_on:
