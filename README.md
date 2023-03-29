@@ -84,3 +84,6 @@ Response:
     HTTP Code 200: The payslip was successfully retrieved.
     HTTP Code 404: The payslip for the given month and year was not found.
     HTTP Code 422: The provided parameters are invalid.
+
+### Other observations
+ - Application was developed using JDK 18.
