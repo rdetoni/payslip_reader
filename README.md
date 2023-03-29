@@ -39,16 +39,15 @@ payslip.regex.bonusRegex=**Your regex here**<br>
 payslip.regex.netSalaryRegex=**Your regex here**<br>
 
 ### Editing the docker-compose-example.yml
-<p style="color:red; display: inline">1.</p> Rename the docker-compose-example.yml to docker-compose.yml<br> 
-<p style="color:red; display: inline">2.</p> Replace all tags [YOUR_SOMETHING_HERE] with the information applicable to 
-your system<br> 
+1. Rename the docker-compose-example.yml to docker-compose.yml<br> 
+2. Replace all tags [YOUR_SOMETHING_HERE] with the information applicable to your system<br> 
 
 ### Running application
 In order to get the app up and running, follow the steps below:<br>
-<p style="color:red; display: inline">1.</p> Package application with maven: <p style="color:green; display: inline">mvn clean install</p><br>
-<p style="color:red; display: inline">2.</p> Go to the directory where docker-compose.yml is located<br>
-<p style="color:red; display: inline">3.</p> Download all images, build them and run the containers using docker: <p style="color:green; display: inline">docker-compose up --build</p><br>
-<p style="color:red; display: inline">4.</p> Containers should be running with the application now.<br>
+1. Package application with maven: mvn clean install<br>
+2. Go to the directory where docker-compose.yml is located<br>
+3. Download all images, build them and run the containers using docker: docker-compose up --build<br>
+4. Containers should be running with the application now.<br>
 
 ### Prometheus and Grafana
 The app also has prometheus and grafana configured for usage. Grafana will be running on port 3000, and you can use 
