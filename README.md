@@ -6,37 +6,54 @@ application.properties file.
 
 ## **Setting Up**
 
-### Creating application.properties file:
-Under src/main/resources create an application.properties file:
+### Creating application.yaml file:
+Under src/main/resources create an application.yaml file:
 
-#Data Source configuration (For MySQL database)<br>
-spring.jpa.hibernate.ddl-auto=update<br>
-spring.datasource.url=jdbc:mysql://localhost:PORT_NUM/DB_NAME<br>
-spring.datasource.username=YOUR_USERNAME<br>
-spring.datasource.password=YOUR_PASSWORD<br>
-spring.datasource.driver.class-name=com.mysql.cj.jdbc.Driver<br>
+```yaml
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    driver:
+      class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/payslipreader
+    username: 'root'
+    password: '[YOUR_PASSWORD_HERE]'
 
-#Spring boot actuator properties<br>
-#management.endpoints.enabled-by-default=false<br>
-#management.endpoint.info.enabled=true<br>
-#management.endpoints.web.base-path=/manage<br>
-management.endpoints.web.exposure.include=*<br>
-management.endpoints.web.exposure.exclude=beans,caches,conditions,configprops,env,loggers<br>
-management.endpoint.health.show-details=ALWAYS<br>
-management.endpoint.health.group.health-group.include=ping,diskSpace<br>
-management.info.env.enabled=true<br>
+#Spring boot actuator properties
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+        exclude: beans,caches,conditions,configprops,env,loggers
+  endpoint:
+    health:
+      group:
+        health-group:
+          include: ping,diskSpace
+      show-details: ALWAYS
+  info:
+    env:
+      enabled: 'true'
+info:
+  app:
+    name: '@project.name@'
+    java:
+      version: '@java.version@'
+    version: '@project.version@'
+    description: '@project.description@'
 
-info.app.name=@project.name@<br>
-info.app.description=@project.description@<br>
-info.app.version=@project.version@<br>
-info.app.java.version=@java.version@
-
-#Regex configuration<br>
-payslip.regex.dateRegex=**Your regex here**<br>
-payslip.regex.totalYearRegex=**Your regex here**<br>
-payslip.regex.baseSalaryRegex=**Your regex here**<br>
-payslip.regex.bonusRegex=**Your regex here**<br>
-payslip.regex.netSalaryRegex=**Your regex here**<br>
+#Regex configuration
+payslip:
+  regex:
+    baseSalaryRegex: '[YOUR_REGEX_HERE]'
+    netSalaryRegex: '[YOUR_REGEX_HERE]'
+    totalYearRegex: '[YOUR_REGEX_HERE]'
+    dateRegex: '[YOUR_REGEX_HERE]'
+    bonusRegex: '[YOUR_REGEX_HERE]'
+```
 
 ### Editing the docker-compose-example.yml
 1. Rename the docker-compose-example.yml to docker-compose.yml<br> 

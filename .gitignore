@@ -74,6 +74,9 @@ com_crashlytics_export_strings.xml
 # ignore ALL .properties files
 *.properties
 
+# ignore application yaml file
+application.yaml
+
 # ignore ALL .sql files
 *.sql
 

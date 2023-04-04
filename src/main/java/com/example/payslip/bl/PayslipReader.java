@@ -151,8 +151,7 @@ public Payslip getPayslipFromFile(MultipartFile originalPdf, String password) th
     date = extractString(dateRegex, payslipContent);
 
     //total year sum
-    //TODO: Special character ł is not working when used as a property. Needs to be fixed.
-    totalYear = extractString("Podstawa składek\s\n.*\n\s[\\d]{2,3}\s[\\d]{2,3},[\\d]{2}", payslipContent);
+    totalYear = extractString(totalYearRegex, payslipContent);
     totalYear = totalYear.replaceAll(",",".").substring(32, totalYear.length()).replaceAll(" ", "");
 
     //base salary
