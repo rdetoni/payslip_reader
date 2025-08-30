@@ -1,0 +1,55 @@
+version: '2.13'
+services:
+  mysql-payslip:
+    image: 'arm64v8/mysql:8.3.0'
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=vE^2b1jY60KP
+      - MYSQL_DATABASE=payslipreader
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-payslip-data:/var/lib/mysql
+
+  payslip-reader:
+    build: .
+    container_name: payslipapp
+    ports:
+      - "8081:8080"
+      - "5005:5005"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-payslip:3306/payslipreader
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=vE^2b1jY60KP
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+    depends_on:
+      - mysql-payslip
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    volumes:
+      - type: bind
+        source: src/main/resources/prometheus.yml
+        target: /etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus-data
+    depends_on:
+      - payslip-reader
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3001:3001"
+    volumes:
+      - grafana-data:/grafana-data
+
+volumes:
+  mysql-payslip-data:
+  prometheus-data:
+  grafana-data:

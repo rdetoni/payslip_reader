@@ -79,30 +79,12 @@ private PDDocument getFileDecrypted(File originalPdf, String password) throws IO
     return document;
 }
 
-private String extractString(String regex, String text){
-    Pattern pattern = Pattern.compile(regex);
-    Matcher matcher = pattern.matcher(text);
-    return matcher.find() ? matcher.group(0) : "";
-}
-
 private void isExistingPayslip(Payslip payslip) throws FileAlreadyExistsException {
     log.info("Checking if payslip already exists.");
 
     if(payslipRepository.findByMonthAndYear(payslip.getMonth(), payslip.getYear()).isPresent()){
         log.info("Payslip already exists.");
         throw new FileAlreadyExistsException("Payslip already exists.");
-    }
-}
-
-private File getFile(MultipartFile file, String fileName) throws IOException{
-    File convertedFile = new File(System.getProperty("java.io.tmpdir")+"/"+fileName);
-
-    if(convertedFile.exists()){
-        return convertedFile;
-    }else{
-        OutputStream outputStream = new FileOutputStream(convertedFile);
-        outputStream.write(file.getBytes());
-        return convertedFile;
     }
 }
 
@@ -141,30 +123,30 @@ private Payslip validateAndCreateObject(String date, String totalYear, String ba
 
 public Payslip getPayslipFromFile(MultipartFile originalPdf, String password) throws IOException, FileAlreadyExistsException {
     log.info("Process for reading PDF file started.");
-    PDDocument document = getFileDecrypted(getFile(originalPdf, originalPdf.getOriginalFilename()), password);
+    PDDocument document = getFileDecrypted(ReaderUtils.getFile(originalPdf, originalPdf.getOriginalFilename()), password);
     PDFTextStripper pdfTextStripper = new PDFTextStripper();
     String payslipContent = pdfTextStripper.getText(document);
     document.close();
 
     log.info("Extracting necessary information");
     //gets month and year
-    date = extractString(dateRegex, payslipContent);
+    date = ReaderUtils.extractString(dateRegex, payslipContent);
 
     //total year sum
-    totalYear = extractString(totalYearRegex, payslipContent);
+    totalYear = ReaderUtils.extractString(totalYearRegex, payslipContent);
     totalYear = totalYear.replaceAll(",",".").substring(32, totalYear.length()).replaceAll(" ", "");
 
     //base salary
-    baseSalary = extractString(baseSalaryRegex, payslipContent).replaceAll(",", ".").substring(0, 9)
+    baseSalary = ReaderUtils.extractString(baseSalaryRegex, payslipContent).replaceAll(",", ".").substring(0, 9)
             .replaceAll(" ", "");
     //bonus
-    bonus = extractString(bonusRegex, payslipContent);
+    bonus = ReaderUtils.extractString(bonusRegex, payslipContent);
     if(!bonus.isEmpty()){
         bonus = bonus.replaceAll(",", ".").substring(0, bonus.length()-5).replaceAll(" ", "");
     }
 
     //net salary
-    netSalary = extractString(netSalaryRegex, payslipContent).replaceAll(",", ".")
+    netSalary = ReaderUtils.extractString(netSalaryRegex, payslipContent).replaceAll(",", ".")
             .substring(0, 8).replaceAll(" ", "");
     log.info("Information extracted successfully.");
 

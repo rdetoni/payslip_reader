@@ -1,5 +1,9 @@
 #Dockerfile for payslip project
-FROM openjdk
+#Local environment image
+#FROM openjdk
+
+#Raspberry-PI image
+FROM eclipse-temurin:17-jdk
 
 WORKDIR /payslip-reader
 

@@ -1,0 +1,54 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    driver:
+      class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/payslipreader
+    username: 'root'
+    password: 'vE^2b1jY60KP'
+
+#Spring boot actuator properties
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+        exclude: beans,caches,conditions,configprops,env,loggers
+  endpoint:
+    health:
+      group:
+        health-group:
+          include: ping,diskSpace
+      show-details: ALWAYS
+  info:
+    env:
+      enabled: 'true'
+info:
+  app:
+    name: '@project.name@'
+    java:
+      version: '@java.version@'
+    version: '@project.version@'
+    description: '@project.description@'
+
+#Regex configuration
+payslip:
+  regex:
+    baseSalaryRegex: '[YOUR_REGEX_HERE]'
+    netSalaryRegex: '[YOUR_REGEX_HERE]'
+    totalYearRegex: '[YOUR_REGEX_HERE]'
+    dateRegex: '[YOUR_REGEX_HERE]'
+    bonusRegex: '[YOUR_REGEX_HERE]'
+
+rico:
+  brokerNote:
+    operationType: '(?m)^\d+-BOVESPA\s+([CV])\b'
+    name: '(?m)^\d+-BOVESPA\s+[CV]\s+\S+\s+(.+?)\s{2,}[A-Z]{4}\d{1,2}'
+    ticker: '\b([A-Z]{4}\d{1,2})\b'
+    quantity: '\b(\d+)\s+\d+,\d{2}\s+\d+,\d{2}\b'
+    price: '\b\d+\s+(\d+,\d{2})\s+\d+,\d{2}\b'
+    total: '\b\d+,\d{2}\s+(\d+,\d{2})\s+D\b'
+    totalWithTaxes: '(?m)^\s*(\d+,\d{2})Líquido para'
+    date: '(?m)^Data pregão\s+(\d{2}/\d{2}/\d{4})'
