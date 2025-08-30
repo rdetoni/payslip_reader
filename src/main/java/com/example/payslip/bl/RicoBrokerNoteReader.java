@@ -44,17 +44,18 @@ public class RicoBrokerNoteReader {
             PDFTextStripper pdfTextStripper = new PDFTextStripper();
             String brokerNoteContent = pdfTextStripper.getText(document);
 
-            val noteTotal = BigDecimal.valueOf(Double.parseDouble(ReaderUtils.extractString(this.total, brokerNoteContent).trim().replace(',', '.')));
+            val noteTotalWithTaxes = BigDecimal.valueOf(Double.parseDouble(ReaderUtils.extractString(this.totalWithTaxes, brokerNoteContent, 1).trim().replace(',', '.')));
+            val noteTotal = BigDecimal.valueOf(Double.parseDouble(ReaderUtils.extractString(this.total, brokerNoteContent, 1).trim().replace(',', '.')));
 
             val ricoBrokerNote = RicoBrokerNote.builder()
-                    .operationType(OperationType.fromCode(ReaderUtils.extractString(this.operationType, brokerNoteContent)))
-                    .name(ReaderUtils.extractString(this.name, brokerNoteContent))
-                    .ticker(ReaderUtils.extractString(this.ticker, brokerNoteContent))
-                    .quantity(Integer.valueOf(ReaderUtils.extractString(this.quantity, brokerNoteContent)))
-                    .price(BigDecimal.valueOf(Double.parseDouble(ReaderUtils.extractString(this.price, brokerNoteContent).trim().replace(',', '.'))))
+                    .operationType(OperationType.fromCode(ReaderUtils.extractString(this.operationType, brokerNoteContent, 1)))
+                    .name(ReaderUtils.extractString(this.name, brokerNoteContent, 1))
+                    .ticker(ReaderUtils.extractString(this.ticker, brokerNoteContent, 1))
+                    .quantity(Integer.valueOf(ReaderUtils.extractString(this.quantity, brokerNoteContent, 1)))
+                    .price(BigDecimal.valueOf(Double.parseDouble(ReaderUtils.extractString(this.price, brokerNoteContent, 1).trim().replace(',', '.'))))
                     .total(noteTotal)
-                    .fees(noteTotal.subtract(BigDecimal.valueOf(Double.parseDouble(ReaderUtils.extractString(this.totalWithTaxes, brokerNoteContent).trim().replace(',', '.')))))
-                    .date(ReaderUtils.getDateFromString(ReaderUtils.extractString(this.date, brokerNoteContent)))
+                    .fees(noteTotalWithTaxes.subtract(noteTotal))
+                    .date(ReaderUtils.getDateFromString(ReaderUtils.extractString(this.date, brokerNoteContent, 1)))
                     .createdAt(LocalDateTime.now())
                     .updatedAt(LocalDateTime.now())
                     .build();

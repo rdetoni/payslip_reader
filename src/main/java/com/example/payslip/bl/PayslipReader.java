@@ -130,23 +130,23 @@ public Payslip getPayslipFromFile(MultipartFile originalPdf, String password) th
 
     log.info("Extracting necessary information");
     //gets month and year
-    date = ReaderUtils.extractString(dateRegex, payslipContent);
+    date = ReaderUtils.extractString(dateRegex, payslipContent, 0);
 
     //total year sum
-    totalYear = ReaderUtils.extractString(totalYearRegex, payslipContent);
+    totalYear = ReaderUtils.extractString(totalYearRegex, payslipContent, 0);
     totalYear = totalYear.replaceAll(",",".").substring(32, totalYear.length()).replaceAll(" ", "");
 
     //base salary
-    baseSalary = ReaderUtils.extractString(baseSalaryRegex, payslipContent).replaceAll(",", ".").substring(0, 9)
+    baseSalary = ReaderUtils.extractString(baseSalaryRegex, payslipContent, 0).replaceAll(",", ".").substring(0, 9)
             .replaceAll(" ", "");
     //bonus
-    bonus = ReaderUtils.extractString(bonusRegex, payslipContent);
+    bonus = ReaderUtils.extractString(bonusRegex, payslipContent, 0);
     if(!bonus.isEmpty()){
         bonus = bonus.replaceAll(",", ".").substring(0, bonus.length()-5).replaceAll(" ", "");
     }
 
     //net salary
-    netSalary = ReaderUtils.extractString(netSalaryRegex, payslipContent).replaceAll(",", ".")
+    netSalary = ReaderUtils.extractString(netSalaryRegex, payslipContent, 0).replaceAll(",", ".")
             .substring(0, 8).replaceAll(" ", "");
     log.info("Information extracted successfully.");
 
