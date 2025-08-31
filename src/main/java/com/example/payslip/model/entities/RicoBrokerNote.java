@@ -50,4 +50,7 @@ public class RicoBrokerNote {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @Column(name = "broker_note", columnDefinition = "MEDIUMBLOB")
+    private byte[] brokerNote;
 }

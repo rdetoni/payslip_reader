@@ -30,8 +30,7 @@ public class ReaderUtils {
     public String extractString(String regex, String text, int groupIndex){
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(text);
-        val result = matcher.find() ? matcher.group(groupIndex) : "";
-        return result;
+        return matcher.find() ? matcher.group(groupIndex) : "";
     }
 
     public LocalDate getDateFromString(String date){

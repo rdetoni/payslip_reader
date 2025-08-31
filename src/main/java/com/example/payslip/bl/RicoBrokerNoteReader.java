@@ -47,22 +47,19 @@ public class RicoBrokerNoteReader {
             val noteTotalWithTaxes = BigDecimal.valueOf(Double.parseDouble(ReaderUtils.extractString(this.totalWithTaxes, brokerNoteContent, 1).trim().replace(',', '.')));
             val noteTotal = BigDecimal.valueOf(Double.parseDouble(ReaderUtils.extractString(this.total, brokerNoteContent, 1).trim().replace(',', '.')));
 
-            val ricoBrokerNote = RicoBrokerNote.builder()
-                    .operationType(OperationType.fromCode(ReaderUtils.extractString(this.operationType, brokerNoteContent, 1)))
-                    .name(ReaderUtils.extractString(this.name, brokerNoteContent, 1))
-                    .ticker(ReaderUtils.extractString(this.ticker, brokerNoteContent, 1))
-                    .quantity(Integer.valueOf(ReaderUtils.extractString(this.quantity, brokerNoteContent, 1)))
-                    .price(BigDecimal.valueOf(Double.parseDouble(ReaderUtils.extractString(this.price, brokerNoteContent, 1).trim().replace(',', '.'))))
-                    .total(noteTotal)
-                    .fees(noteTotalWithTaxes.subtract(noteTotal))
-                    .date(ReaderUtils.getDateFromString(ReaderUtils.extractString(this.date, brokerNoteContent, 1)))
-                    .createdAt(LocalDateTime.now())
-                    .updatedAt(LocalDateTime.now())
-                    .build();
-
-            return null;
-
-
+            return RicoBrokerNote.builder()
+                .operationType(OperationType.fromCode(ReaderUtils.extractString(this.operationType, brokerNoteContent, 1)))
+                .name(ReaderUtils.extractString(this.name, brokerNoteContent, 1))
+                .ticker(ReaderUtils.extractString(this.ticker, brokerNoteContent, 1))
+                .quantity(Integer.valueOf(ReaderUtils.extractString(this.quantity, brokerNoteContent, 1)))
+                .price(BigDecimal.valueOf(Double.parseDouble(ReaderUtils.extractString(this.price, brokerNoteContent, 1).trim().replace(',', '.'))))
+                .total(noteTotal)
+                .fees(noteTotalWithTaxes.subtract(noteTotal))
+                .date(ReaderUtils.getDateFromString(ReaderUtils.extractString(this.date, brokerNoteContent, 1)))
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .brokerNote(file.getBytes())
+                .build();
         } catch (IOException e) {
             log.info("[RicoBrokerNoteReader] Exception caught processing RICO's broker note: {}", e.getMessage());
             throw e;
