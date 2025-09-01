@@ -2,6 +2,7 @@ package com.example.payslip.model.messages;
 
 import com.example.payslip.model.enums.AssetType;
 import com.example.payslip.model.enums.OperationType;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
+@Builder
 public class AssetMessage {
     private String ticker;
     private Double fees;

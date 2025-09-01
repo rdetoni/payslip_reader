@@ -1,5 +1,6 @@
 package com.example.payslip.service;
 
+import com.example.payslip.bl.AssetConverter;
 import com.example.payslip.bl.RicoBrokerNoteReader;
 import com.example.payslip.model.entities.RicoBrokerNote;
 import com.example.payslip.model.repo.RicoBrokerNoteRepository;
@@ -15,18 +16,24 @@ import java.io.IOException;
 public class BrokerNoteService {
     private final RicoBrokerNoteReader ricoBrokerNoteReader;
     private final RicoBrokerNoteRepository ricoBrokerNoteRepository;
+    private final AssetPublisher assetPublisher;
 
     @Autowired
     public BrokerNoteService(RicoBrokerNoteReader ricoBrokerNoteReader,
-                             RicoBrokerNoteRepository ricoBrokerNoteRepository){
+                             RicoBrokerNoteRepository ricoBrokerNoteRepository,
+                             AssetPublisher assetPublisher){
         this.ricoBrokerNoteReader = ricoBrokerNoteReader;
         this.ricoBrokerNoteRepository = ricoBrokerNoteRepository;
+        this.assetPublisher = assetPublisher;
     }
 
     @Transactional
-    public RicoBrokerNote createRicoBrokerNote(MultipartFile file) throws IOException {
+    public void createRicoBrokerNote(MultipartFile file) throws IOException {
         val ricoBrokerNote = ricoBrokerNoteReader.getBrokerNoteFromFile(file);
-        ricoBrokerNoteRepository.save(ricoBrokerNote);
-        return null;
+        ricoBrokerNote.forEach(note -> {
+                ricoBrokerNoteRepository.save(note);
+                assetPublisher.publishAsset(AssetConverter.convertNoteToMessage(note));
+            }
+        );
     }
 }

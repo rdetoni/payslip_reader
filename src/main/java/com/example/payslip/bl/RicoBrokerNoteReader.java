@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -37,7 +38,7 @@ public class RicoBrokerNoteReader {
     @Value("${rico.brokerNote.date}")
     private String date;
 
-    public RicoBrokerNote getBrokerNoteFromFile(MultipartFile file) throws IOException {
+    public List<RicoBrokerNote> getBrokerNoteFromFile(MultipartFile file) throws IOException {
         log.info("Starting process for RICO's broker note.");
         try (PDDocument document = PDDocument.load(
                 ReaderUtils.getFile(file, BROKER_NOTE_NAME.concat(LocalDate.now().toString())))) {
@@ -47,7 +48,7 @@ public class RicoBrokerNoteReader {
             val noteTotalWithTaxes = BigDecimal.valueOf(Double.parseDouble(ReaderUtils.extractString(this.totalWithTaxes, brokerNoteContent, 1).trim().replace(',', '.')));
             val noteTotal = BigDecimal.valueOf(Double.parseDouble(ReaderUtils.extractString(this.total, brokerNoteContent, 1).trim().replace(',', '.')));
 
-            return RicoBrokerNote.builder()
+            return List.of(RicoBrokerNote.builder()
                 .operationType(OperationType.fromCode(ReaderUtils.extractString(this.operationType, brokerNoteContent, 1)))
                 .name(ReaderUtils.extractString(this.name, brokerNoteContent, 1))
                 .ticker(ReaderUtils.extractString(this.ticker, brokerNoteContent, 1))
@@ -59,7 +60,7 @@ public class RicoBrokerNoteReader {
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .brokerNote(file.getBytes())
-                .build();
+                .build());
         } catch (IOException e) {
             log.info("[RicoBrokerNoteReader] Exception caught processing RICO's broker note: {}", e.getMessage());
             throw e;
