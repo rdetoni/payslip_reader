@@ -20,7 +20,7 @@ public class BrokerNoteController {
 
     @PostMapping("/createRicoNote")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createRicoNote(@RequestParam MultipartFile file) throws IOException {
+    public void createRicoNote(@RequestParam("file") MultipartFile file) throws IOException {
         this.brokerNoteService.createRicoBrokerNote(file);
     }
 }

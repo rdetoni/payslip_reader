@@ -22,6 +22,7 @@ public class RicoBrokerNote {
     private Long id;
 
     @Column(name = "operation_type", nullable = false)
+    @Enumerated(EnumType.STRING)
     private OperationType operationType;
 
     @Column(name = "name")

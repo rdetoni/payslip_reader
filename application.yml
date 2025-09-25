@@ -5,9 +5,14 @@ spring:
   datasource:
     driver:
       class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/payslipreader
-    username: 'root'
+    url: jdbc:mysql://192.168.0.51:3306/payslipreader
+    username: 'payslipuser'
     password: 'vE^2b1jY60KP'
+  rabbitmq:
+    host: 192.168.0.51
+    port: 5672
+    username: admin
+    password: adminpass
 
 #Spring boot actuator properties
 management:
@@ -49,6 +54,7 @@ rico:
     ticker: '\b([A-Z]{4}\d{1,2})\b'
     quantity: '\b(\d+)\s+\d+,\d{2}\s+\d+,\d{2}\b'
     price: '\b\d+\s+(\d+,\d{2})\s+\d+,\d{2}\b'
-    total: '\b\d+,\d{2}\s+(\d+,\d{2})\s+D\b'
+    total: '\bR\$\d{1,3},\d{2}\b'
     totalWithTaxes: '(?m)^\s*(\d+,\d{2})Líquido para'
     date: '(?m)^Data pregão\s+(\d{2}/\d{2}/\d{4})'
+    bovespa: '1-BOVESPA'
