@@ -29,8 +29,8 @@ public class BrokerNoteService {
 
     @Transactional
     public void createRicoBrokerNote(MultipartFile file) throws IOException {
-        val ricoBrokerNote = ricoBrokerNoteReader.getBrokerNoteFromFile(file);
-        ricoBrokerNote.forEach(note -> {
+        val ricoBrokerNotes = ricoBrokerNoteReader.getBrokerNoteFromFile(file);
+        ricoBrokerNotes.forEach(note -> {
                 ricoBrokerNoteRepository.save(note);
                 assetPublisher.publishAsset(AssetConverter.convertNoteToMessage(note));
             }

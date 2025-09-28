@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -52,9 +53,8 @@ public class RicoBrokerNoteReader {
             val noteTotalWithTaxes = BigDecimal.valueOf(Double.parseDouble(ReaderUtils.extractString(
                     this.totalWithTaxes, brokerNoteContent, 1).trim().replace(',', '.')));
             val noteTotal = BigDecimal.valueOf(Double.parseDouble(ReaderUtils.extractString(
-                    this.total, brokerNoteContent, 1).substring(1).trim()
-                    .replace(',', '.')));
-            val totalFee = noteTotalWithTaxes.subtract(noteTotal);
+                    this.total, brokerNoteContent, 1).trim().replace(',', '.')));
+            val totalFee = noteTotalWithTaxes.subtract(noteTotal).abs();
             val date = ReaderUtils.getDateFromString(ReaderUtils.extractString(
                     this.date, brokerNoteContent, 1));
             val brokerNote = file.getBytes();
@@ -72,8 +72,9 @@ public class RicoBrokerNoteReader {
                                         .ticker(ReaderUtils.extractString(this.ticker, line, 1))
                                         .quantity(quantity)
                                         .price(price)
-                                        .total(noteTotal)
-                                        .fees(calculateSingleFee(totalFee,quantity, price, noteTotal))
+                                        .total(price.multiply(BigDecimal.valueOf(quantity)))
+                                        .fees(calculateSingleFee(totalFee, quantity, price, noteTotal
+                                                .compareTo(noteTotalWithTaxes) < 0 ? noteTotal : noteTotalWithTaxes))
                                         .date(date)
                                         .createdAt(LocalDateTime.now())
                                         .updatedAt(LocalDateTime.now())
@@ -90,8 +91,9 @@ public class RicoBrokerNoteReader {
 
     private BigDecimal calculateSingleFee(BigDecimal totalFee, int quantity, BigDecimal unityValue,
                                           BigDecimal totalValue) {
-        BigDecimal percentage = BigDecimal.valueOf(quantity).multiply(unityValue).divide(totalValue)
-                .multiply(BigDecimal.valueOf(100.0));
-        return totalFee.multiply(percentage);
+        BigDecimal numerator = BigDecimal.valueOf(quantity).multiply(unityValue);
+        BigDecimal rate = numerator.divide(totalValue, 10, RoundingMode.HALF_UP); // scale = 10 for precision
+        return totalFee.multiply(rate).setScale(2, RoundingMode.HALF_UP);
     }
+
 }
