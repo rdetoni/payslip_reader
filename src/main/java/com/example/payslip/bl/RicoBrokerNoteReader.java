@@ -51,9 +51,11 @@ public class RicoBrokerNoteReader {
             List<String> lines = Arrays.asList(brokerNoteContent.split("\\r?\\n"));
 
             val noteTotalWithTaxes = BigDecimal.valueOf(Double.parseDouble(ReaderUtils.extractString(
-                    this.totalWithTaxes, brokerNoteContent, 1).trim().replace(',', '.')));
+                    this.totalWithTaxes, brokerNoteContent, 1).trim().replace(".", "")
+                    .replace(',', '.')));
             val noteTotal = BigDecimal.valueOf(Double.parseDouble(ReaderUtils.extractString(
-                    this.total, brokerNoteContent, 1).trim().replace(',', '.')));
+                    this.total, brokerNoteContent, 1).trim().replace(".", "")
+                    .replace(',', '.')));
             val totalFee = noteTotalWithTaxes.subtract(noteTotal).abs();
             val date = ReaderUtils.getDateFromString(ReaderUtils.extractString(
                     this.date, brokerNoteContent, 1));
